@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 274621228}
   - component: {fileID: 274621229}
   - component: {fileID: 274621230}
+  - component: {fileID: 274621231}
   m_Layer: 0
   m_Name: GhostPlayer
   m_TagString: Untagged
@@ -222,13 +223,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 166d1904f988ba94e84cce8937e81eb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BaseSpeed: 8
-  Acceleration: 40
-  Deceleration: 50
   MaxSpeed: 10
-  ExternalDamping: 3
+  ExternalDamping: 0.1
   StopThreshold: 0.05
-  InputAggressiveness: 1
 --- !u!114 &274621228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -245,12 +242,16 @@ MonoBehaviour:
   startDelay: 0.5
   followSpeed: 10
   smoothTime: 0.3
-  offset: {x: 1, y: 1, z: 0}
-  moveSpeed: 8
-  acceleration: 40
-  deceleration: 50
+  offset: {x: 2, y: 1, z: 0}
+  moveSpeed: 16
+  useLeash: 1
+  maxDistance: 20
+  softBand: 0.5
+  allowTangentSlide: 1
+  hardClampPosition: 0
   target: {fileID: 2076446033}
   playerController: {fileID: 2076446034}
+  ghostControllerInput: {fileID: 885404719}
 --- !u!50 &274621229
 Rigidbody2D:
   serializedVersion: 5
@@ -324,6 +325,28 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 2}
   m_EdgeRadius: 0
+--- !u!114 &274621231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274621223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9125829610d8f4cb5f98cd378859f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boxPrefab: {fileID: 7883187208928381944, guid: 4b3d8bc04f14a794785d24f844f0b8f0, type: 3}
+  spawnOffset: {x: 1, y: 0.5}
+  boxLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  detectRadius: 10.48
+  controlSpeed: 6
+  doubleTapWindow: 0.3
+  zeroGravityWhileHolding: 1
+  dragWhileHolding: 8
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,11 +648,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PushPullBridge: {fileID: 2076446038}
   m_Controller: {fileID: 2076446034}
+  ghost: {fileID: 274621228}
+  cameraFollow: {fileID: 519420033}
+  ghostCollider: {fileID: 274621230}
+  playerCollider: {fileID: 2076446037}
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_GrabKey: 101
   m_SpeedScaleWhileGrab: 0.5
   m_OnlyWhenPulling: 1
+  toggleControlKey: 113
+  freezePlayerWhenPossessed: 1
+  zeroGhostInputInFollow: 1
 --- !u!114 &885404719
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -645,12 +675,13 @@ MonoBehaviour:
   ghost: {fileID: 274621228}
   playerController: {fileID: 2076446034}
   playerTransform: {fileID: 2076446033}
+  boxSkill: {fileID: 274621231}
   cameraFollow: {fileID: 519420033}
   playerCollider: {fileID: 2076446037}
   ghostCollider: {fileID: 274621230}
   horizontalAxis: Horizontal
   verticalAxis: Vertical
-  toggleControlKey: 113
+  boxKey: 101
   freezePlayerWhenPossessed: 1
   zeroGhostInputInFollow: 1
 --- !u!1 &1538004294
@@ -705,7 +736,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -10.39818}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -715,7 +746,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 21.796463}
   m_EdgeRadius: 0
 --- !u!212 &1538004296
 SpriteRenderer:
@@ -799,8 +830,8 @@ GameObject:
   - component: {fileID: 1590879209}
   - component: {fileID: 1590879208}
   - component: {fileID: 1590879213}
-  - component: {fileID: 1590879212}
-  - component: {fileID: 1590879211}
+  - component: {fileID: 1590879214}
+  - component: {fileID: 1590879215}
   m_Layer: 6
   m_Name: Obstacle
   m_TagString: Untagged
@@ -924,45 +955,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1590879211
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1590879207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9801064210fff8d4bbd67969e42d2036, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Motor: {fileID: 1590879212}
-  m_Physics:
-    Gravity: -25
-    LinearDrag: 8
-    MaxHorizontalSpeed: 4
-  m_Grab:
-    GrabMoveForce: 233.8
-    BreakDistance: 1.8
-    HoldOffsetX: 0.45
-    FollowSpeed: 10
-    MaxSpeedWhenGrabbed: 12
---- !u!114 &1590879212
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1590879207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbbdea32faa443a4692b5e4ed7f7be39, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Raycaster: {fileID: 1590879213}
-  m_CollisionMask:
-    serializedVersion: 2
-    m_Bits: 136
 --- !u!114 &1590879213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -981,6 +973,55 @@ MonoBehaviour:
     m_Bits: 200
   m_HorizontalRayCount: 4
   m_VerticalRayCount: 4
+--- !u!50 &1590879214
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590879207}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &1590879215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590879207}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9801064210fff8d4bbd67969e42d2036, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Physics:
+    Gravity: -9
+    LinearDrag: 2
+    MaxHorizontalSpeed: 4
+  m_Grab:
+    GrabMoveForce: 45
+    BreakDistance: 3
+    HoldOffsetX: 0.45
+    FollowSpeed: 12
+    MaxSpeedWhenGrabbed: 6
 --- !u!1 &1926699463
 GameObject:
   m_ObjectHideFlags: 0
@@ -998,7 +1039,7 @@ GameObject:
   - component: {fileID: 1926699471}
   - component: {fileID: 1926699473}
   - component: {fileID: 1926699472}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: Platform
   m_TagString: OneWayPlatform
   m_Icon: {fileID: 0}
@@ -1387,7 +1428,7 @@ MonoBehaviour:
   <Collider>k__BackingField: {fileID: 2076446037}
   m_CollisionLayer:
     serializedVersion: 2
-    m_Bits: 72
+    m_Bits: 328
   m_HorizontalRayCount: 4
   m_VerticalRayCount: 4
 --- !u!61 &2076446037

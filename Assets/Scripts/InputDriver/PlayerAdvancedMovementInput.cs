@@ -7,6 +7,10 @@ namespace DYP
         [Header("References")]
         [SerializeField] private CharacterPushPullBridge2D m_PushPullBridge;
         [SerializeField] private BasicMovementController2D m_Controller; // NEW: overwrite için
+        [SerializeField] private GhostMovementController2D ghost;
+        [SerializeField] private CameraFollow cameraFollow;
+        [SerializeField] private Collider2D ghostCollider;
+        [SerializeField] private Collider2D playerCollider;
 
         [Header("Bindings (Old Input Manager)")]
         [SerializeField] private string m_HorizontalAxis = "Horizontal";
@@ -16,6 +20,12 @@ namespace DYP
         [Header("Grab Slowdown")]
         [SerializeField, Range(0.1f, 1f)] private float m_SpeedScaleWhileGrab = 0.5f; // %50 hız
         [SerializeField] private bool m_OnlyWhenPulling = false; // true ise sadece çekmede yavaşlat
+
+        [Header("Toggle Character")]
+        [SerializeField] private KeyCode toggleControlKey = KeyCode.Q; // possess
+        private bool IsPossessing => ghost != null && ghost.Mode == GhostMode.FreeControl;
+        [SerializeField] private bool freezePlayerWhenPossessed = true;
+        [SerializeField] private bool zeroGhostInputInFollow = true;
 
         private void Reset()
         {
@@ -60,6 +70,36 @@ namespace DYP
                     m_Controller.InputMovement(new Vector2(scaledX, vertical));
                 }
             }
+
+
+            if (Input.GetKeyDown(toggleControlKey))
+                TogglePossession();
+        }
+
+        private void TogglePossession()
+        {
+            if (!IsPossessing)
+            {
+                ghost.TakeControl();
+
+                if (freezePlayerWhenPossessed && m_Controller != null)
+                    m_Controller.SetFrozen(true);
+
+                if (cameraFollow != null && ghostCollider != null)
+                    cameraFollow.SetMainTarget(ghostCollider);
+            }
+            else
+            {
+                ghost.ReleaseControl();
+
+                if (freezePlayerWhenPossessed && m_Controller != null)
+                    m_Controller.SetFrozen(false);
+
+                if (cameraFollow != null && playerCollider != null)
+                    cameraFollow.SetMainTarget(playerCollider);
+            }
         }
     }
+
+
 }

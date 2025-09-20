@@ -2,12 +2,19 @@ using UnityEngine;
 
 namespace DYP
 {
+    /// <summary>
+    /// GhostMovementController2D için input sürücüsü + Kutu Skill entegrasyonu.
+    /// - Q: Takip <-> Serbest kontrol
+    /// - E (Down x2): Kutu spawn
+    /// - E (Hold): En yakın kutuyu kontrol et (ghost hareketsiz)
+    /// </summary>
     public class GhostInputDriver2D : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private GhostMovementController2D ghost;
         [SerializeField] private BasicMovementController2D playerController;
         [SerializeField] private Transform playerTransform;
+        [SerializeField] private GhostBoxSkill2D boxSkill;
 
         [Header("Camera")]
         [SerializeField] private CameraFollow cameraFollow;
@@ -17,7 +24,8 @@ namespace DYP
         [Header("Controls")]
         [SerializeField] private string horizontalAxis = "Horizontal";
         [SerializeField] private string verticalAxis = "Vertical";
-        [SerializeField] private KeyCode toggleControlKey = KeyCode.Q;
+
+        [SerializeField] private KeyCode boxKey = KeyCode.E;
 
         [Header("Behaviour")]
         [SerializeField] private bool freezePlayerWhenPossessed = true;
@@ -28,14 +36,14 @@ namespace DYP
         private void Reset()
         {
             ghost = GetComponent<GhostMovementController2D>();
+            boxSkill = GetComponent<GhostBoxSkill2D>();
         }
 
         private void Start()
         {
-            if (ghost == null)
-                ghost = GetComponent<GhostMovementController2D>();
+            if (ghost == null) ghost = GetComponent<GhostMovementController2D>();
+            if (boxSkill == null) boxSkill = GetComponent<GhostBoxSkill2D>();
 
-            // Player ve colliderları otomatik bul
             if (playerTransform == null || playerController == null || playerCollider == null)
             {
                 var playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -46,12 +54,9 @@ namespace DYP
                     if (playerCollider == null) playerCollider = playerObj.GetComponent<Collider2D>();
                 }
             }
-
-            // Ghost collider yoksa bu objeden çek
-            if (ghostCollider == null)
+            if (ghostCollider == null && ghost != null)
                 ghostCollider = ghost.GetComponent<Collider2D>();
 
-            // Kamera yoksa sahnedeki ana kameradan almayı dene
             if (cameraFollow == null && Camera.main != null)
                 cameraFollow = Camera.main.GetComponent<CameraFollow>();
         }
@@ -60,45 +65,38 @@ namespace DYP
         {
             if (ghost == null) return;
 
-            if (Input.GetKeyDown(toggleControlKey))
-                TogglePossession();
+
+
+
+            // Update() içinde
+            bool eDown = Input.GetKeyDown(boxKey);
+            bool eHeld = Input.GetKey(boxKey);
+            bool eUp = Input.GetKeyUp(boxKey);
+
+            float h = Input.GetAxisRaw(horizontalAxis);
+            float v = Input.GetAxisRaw(verticalAxis);
+            Vector2 axis = new Vector2(h, v);
+
+            if (boxSkill != null)
+            {
+                if (eDown) boxSkill.OnEPressed();
+                if (eHeld) boxSkill.OnEHold(axis);
+                if (eUp) boxSkill.OnEReleased();
+            }
 
             if (IsPossessing)
             {
-                float h = Input.GetAxisRaw(horizontalAxis);
-                float v = Input.GetAxisRaw(verticalAxis);
-                ghost.InputMovement(new Vector2(h, v));
+                if (eHeld) ghost.InputMovement(Vector2.zero); // E tutulurken hayalet durur
+                else ghost.InputMovement(axis);
             }
             else if (zeroGhostInputInFollow)
             {
                 ghost.InputMovement(Vector2.zero);
             }
+
         }
 
-        private void TogglePossession()
-        {
-            if (!IsPossessing)
-            {
-                ghost.TakeControl();
 
-                if (freezePlayerWhenPossessed && playerController != null)
-                    playerController.SetFrozen(true);
 
-                // KAMERA -> GHOST
-                if (cameraFollow != null && ghostCollider != null)
-                    cameraFollow.SetMainTarget(ghostCollider);
-            }
-            else
-            {
-                ghost.ReleaseControl();
-
-                if (freezePlayerWhenPossessed && playerController != null)
-                    playerController.SetFrozen(false);
-
-                // KAMERA -> PLAYER
-                if (cameraFollow != null && playerCollider != null)
-                    cameraFollow.SetMainTarget(playerCollider);
-            }
-        }
     }
 }

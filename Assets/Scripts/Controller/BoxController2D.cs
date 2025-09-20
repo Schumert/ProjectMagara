@@ -2,68 +2,55 @@ using UnityEngine;
 
 namespace DYP
 {
-    [RequireComponent(typeof(BoxMotor2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class BoxController2D : MonoBehaviour, IHas2DAxisMovement
     {
         [System.Serializable]
         class PhysicsSettings
         {
-            public float Gravity = -25f;
-            public float LinearDrag = 10f;
+            public float Gravity = -25f;          // RB.gravityScale ile de oynayabilirsin
+            public float LinearDrag = 2f;         // havada sürtünme
             public float MaxHorizontalSpeed = 4f;
         }
 
         [System.Serializable]
         class GrabSettings
         {
-            public float GrabMoveForce = 45f;     // eksen ivmesi 
-            public float BreakDistance = 3.0f;    // kopma toleransı 
-            public float HoldOffsetX = 0.45f;     // karakterin önünde tutulacak ofset
-            public float FollowSpeed = 12f;       // kutunun oyuncuyu yakalama hızı
-            public float MaxSpeedWhenGrabbed = 6f;// grabliyken hız limiti
+            public float GrabMoveForce = 45f;     // eksen ivmesi (addforce)
+            public float BreakDistance = 3.0f;    // grab kopma toleransı
+            public float HoldOffsetX = 0.45f;     // karakterin önünde tutulacak offset
+            public float FollowSpeed = 12f;       // kutu grabber’a yaklaşma hızı
+            public float MaxSpeedWhenGrabbed = 6f;
         }
-
-        [Header("References")]
-        [SerializeField] private BoxMotor2D m_Motor;
 
         [Header("Settings")]
         [SerializeField] private PhysicsSettings m_Physics = new PhysicsSettings();
         [SerializeField] private GrabSettings m_Grab = new GrabSettings();
 
+        private Rigidbody2D rb;
         private Vector2 m_InputAxis;
-        private Vector3 m_Velocity;
         private Transform m_Grabber;
+        private float m_AnchorOffsetX = 0f;
 
-        private float m_AnchorOffsetX = 0f; // grab anında belirlenen yerel x ofseti
         public bool IsGrabbed => m_Grabber != null;
-        float IHas2DAxisMovement.MovementSpeed => m_Physics.MaxHorizontalSpeed;
+        float IHas2DAxisMovement.MovementSpeed => IsGrabbed ? m_Grab.MaxSpeedWhenGrabbed : m_Physics.MaxHorizontalSpeed;
 
-
-
-        private void Reset()
+        private void Awake()
         {
-            m_Motor = GetComponent<BoxMotor2D>();
-        }
-
-        private void Start()
-        {
-            m_Velocity = Vector3.zero;
+            rb = GetComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.freezeRotation = true;
+            rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+            //rb.gravityScale = 1f; // ister Gravity ayarını buradan kontrol et
+            rb.linearDamping = m_Physics.LinearDrag;
         }
 
         private void FixedUpdate()
         {
             float dt = Time.fixedDeltaTime;
 
-            // Gravity
-            if (!m_Motor.IsOnMovingMotor)
-                m_Velocity.y += m_Physics.Gravity * dt;
-
-            // Drag (X)
-            float drag = Mathf.Exp(-m_Physics.LinearDrag * dt);
-            //float drag = 1 - m_Physics.LinearDrag * dt;
-            m_Velocity.x *= drag;
-
-            // === GRAB IVME ===
+            // === GRAB ===
             if (IsGrabbed)
             {
                 if (m_Grabber == null || Vector2.Distance(m_Grabber.position, transform.position) > m_Grab.BreakDistance)
@@ -72,54 +59,59 @@ namespace DYP
                 }
                 else
                 {
-                    // Eksen ivmesi: it & çek için yeterli güç
-                    m_Velocity.x += m_Grab.GrabMoveForce * m_InputAxis.x * dt;
+                    // Grab sırasında X ekseni hareketi için kuvvet uygula
+                    rb.AddForce(new Vector2(m_InputAxis.x * m_Grab.GrabMoveForce, 0f));
 
-                    //tether: Grab olduğunda kutu oyuncuya ışınlanmıyor, yavaş yavaş kayıyor
+                    // Grab konumunu yavaşça takip etsin (pozisyon düzeltme)
                     float targetX = m_Grabber.position.x + m_AnchorOffsetX;
                     float currX = transform.position.x;
-                    float maxStep = m_Grab.FollowSpeed * dt;
-                    float deltaX = Mathf.Clamp(targetX - currX, -maxStep, maxStep);
+                    float deltaX = targetX - currX;
 
-                    // tek-karelik “ek mesafe”yi motora pushladık: ek mesafe çünkü velocity’den ayrı, pozisyon düzeltmesi gibi çalışıyor.
+                    float maxStep = m_Grab.FollowSpeed * dt;
+                    deltaX = Mathf.Clamp(deltaX, -maxStep, maxStep);
+
                     if (Mathf.Abs(deltaX) > 0.0001f)
-                        m_Motor.Push(new Vector3(deltaX, 0f, 0f));
+                        rb.MovePosition(rb.position + new Vector2(deltaX, 0f));
+                }
+
+                // Grabliyken max hız limiti
+                if (Mathf.Abs(rb.linearVelocity.x) > m_Grab.MaxSpeedWhenGrabbed)
+                {
+                    rb.linearVelocity = new Vector2(Mathf.Sign(rb.linearVelocity.x) * m_Grab.MaxSpeedWhenGrabbed, rb.linearVelocity.y);
                 }
             }
-
-            // Grabliyken kutuya hız limiti
-            float maxH = IsGrabbed ? m_Grab.MaxSpeedWhenGrabbed : m_Physics.MaxHorizontalSpeed;
-            m_Velocity.x = Mathf.Clamp(m_Velocity.x, -maxH, maxH);
-
-            // Hareket
-            m_Motor.Move(m_Velocity * dt);
-
-            if (m_Motor.IsGrounded && m_Velocity.y < 0) m_Velocity.y = 0;
+            else
+            {
+                // Grablı değilken max hız limiti
+                if (Mathf.Abs(rb.linearVelocity.x) > m_Physics.MaxHorizontalSpeed)
+                {
+                    rb.linearVelocity = new Vector2(Mathf.Sign(rb.linearVelocity.x) * m_Physics.MaxHorizontalSpeed, rb.linearVelocity.y);
+                }
+            }
         }
 
+        // Input köprüsü
+        public void InputMovement(Vector2 axis) => m_InputAxis = axis;
 
-        // Bridge bu API’leri çağırır
-        public void InputMovement(Vector2 axis)
-        {
-            m_InputAxis = axis;
-        }
         public void Grab(Transform grabber)
         {
             m_Grabber = grabber;
-            // Karakterin baktığı tarafa göre anchora minik offset – kutu “tam göğse yapışmasın”
+
+            // Karakterin baktığı yöne göre offset
             float dir = 1f;
             if (grabber.TryGetComponent<BasicMovementController2D>(out var ctrl))
                 dir = Mathf.Sign(Mathf.Max(0.0001f, ctrl.FacingDirection));
+
             m_AnchorOffsetX = dir * m_Grab.HoldOffsetX;
         }
+
         public void Release()
         {
             m_Grabber = null;
             m_InputAxis = Vector2.zero;
         }
 
-        // kısa dürtme (tek karelik displacement)
-        public void Nudge(Vector2 displacement) => m_Motor.Push(displacement);
-
+        // Tek karelik dürtme
+        public void Nudge(Vector2 impulse) => rb.AddForce(impulse, ForceMode2D.Impulse);
     }
 }
