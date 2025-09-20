@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - OneWayPlatform
+  - Spike
   layers:
   - Default
   - TransparentFX
@@ -15,8 +16,8 @@ TagManager:
   - Obstacle
   - Player
   - Platform
-  - 
-  - 
+  - Spike
+  - UnmovableObstacle
   - 
   - 
   - 

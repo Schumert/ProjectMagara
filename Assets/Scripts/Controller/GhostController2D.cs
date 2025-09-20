@@ -79,7 +79,7 @@ namespace DYP
             if (playerController != null)
             {
                 lastFacing = Mathf.Sign(playerController.FacingDirection) >= 0 ? 1 : -1;
-                offset.x = (lastFacing >= 0) ? xAbs : -xAbs;
+                offset.x = (lastFacing >= 0) ? -xAbs : +xAbs;
             }
 
             if (mode == GhostMode.Follow)

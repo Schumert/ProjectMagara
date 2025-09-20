@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace DYP
@@ -24,6 +25,14 @@ namespace DYP
         [SerializeField] private bool zeroGravityWhileHolding = true;
         [Tooltip("Tutarken RB drag’ini artırıp daha stabil kontrol sağlar.")]
         [SerializeField] private float dragWhileHolding = 8f;
+
+        [Header("Limitation")]
+        [SerializeField] private int boxLimit = 2;
+        private int currentBox = 0;
+        private List<GameObject> currentBoxes = new List<GameObject>();
+
+
+
 
         public bool IsControllingBox => _holdActive && _selectedRB != null;
 
@@ -124,8 +133,19 @@ namespace DYP
                 return;
             }
 
+
+
             Vector3 pos = transform.position + (Vector3)spawnOffset;
             var go = Instantiate(boxPrefab, pos, Quaternion.identity);
+            currentBoxes.Add(go);
+
+
+            if (currentBoxes.Count > boxLimit)
+            {
+                Destroy(currentBoxes[0]);
+                currentBoxes.RemoveAt(0);
+
+            }
 
             var rb = go.GetComponent<Rigidbody2D>();
             var col = go.GetComponent<Collider2D>();
@@ -144,6 +164,10 @@ namespace DYP
 
             _lastSpawnedRB = rb;
             CacheSelection(rb); // yeni kutuyu hemen kontrol etmeye başla
+
+
+
+
         }
 
         private void CacheSelection(Rigidbody2D rb)
