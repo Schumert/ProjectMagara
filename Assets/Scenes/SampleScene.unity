@@ -509,6 +509,7 @@ MonoBehaviour:
   doubleTapWindow: 0.3
   zeroGravityWhileHolding: 1
   dragWhileHolding: 8
+  boxLimit: 1
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
