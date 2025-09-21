@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6488356551518959142}
   - component: {fileID: 6427405659582901347}
   - component: {fileID: 4531213133750363946}
+  - component: {fileID: 4429923677377809157}
   m_Layer: 0
   m_Name: GhostPlayer
   m_TagString: Untagged
@@ -30,10 +31,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 929890924000819725}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.86, y: 2.79, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -229,3 +230,17 @@ MonoBehaviour:
   zeroGravityWhileHolding: 1
   dragWhileHolding: 8
   boxLimit: 1
+  spellParticle: {fileID: 5971787488916647326, guid: dcee4329d6e1eef4d99a4afee8d6951d, type: 3}
+--- !u!114 &4429923677377809157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 929890924000819725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1db046ac5ee22b4f9a4e98a7a31c188, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destroyEffectPrefab: {fileID: 7740408298790856959, guid: 2ee86ddcbfd0d7e46a4618473003d027, type: 3}
