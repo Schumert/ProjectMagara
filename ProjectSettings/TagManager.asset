@@ -50,5 +50,8 @@ TagManager:
   - name: Player
     uniqueID: 3815632341
     locked: 0
+  - name: Bgblack
+    uniqueID: 1634010263
+    locked: 0
   m_RenderingLayers:
   - Default
