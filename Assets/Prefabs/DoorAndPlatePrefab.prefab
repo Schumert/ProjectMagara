@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a23d63f44a5d6541a6cd579224b446b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
+  moveSpeed: 5
   moveDirection: {x: 0, y: -1}
 --- !u!61 &98670181587210742
 BoxCollider2D:
@@ -188,6 +188,7 @@ GameObject:
   - component: {fileID: 2424011787176929825}
   - component: {fileID: 923437869627267443}
   - component: {fileID: 3482748892208896739}
+  - component: {fileID: 8358270585415942714}
   m_Layer: 10
   m_Name: DoorStopTrigger
   m_TagString: Untagged
@@ -269,6 +270,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   doorToStop: {fileID: 6566079043429273840}
+--- !u!50 &8358270585415942714
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5335796915446954056}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &8711652903190338911
 GameObject:
   m_ObjectHideFlags: 0

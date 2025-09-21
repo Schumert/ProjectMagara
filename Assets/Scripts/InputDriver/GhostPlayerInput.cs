@@ -15,6 +15,7 @@ namespace DYP
         [SerializeField] private BasicMovementController2D playerController;
         [SerializeField] private Transform playerTransform;
         [SerializeField] private GhostBoxSkill2D boxSkill;
+        [SerializeField] private GhostDestroySkill destroySkill;
 
         [Header("Camera")]
         [SerializeField] private CameraFollow cameraFollow;
@@ -68,7 +69,7 @@ namespace DYP
 
 
 
-            // Update() içinde
+
             bool eDown = Input.GetKeyDown(boxKey);
             bool eHeld = Input.GetKey(boxKey);
             bool eUp = Input.GetKeyUp(boxKey);
@@ -82,6 +83,11 @@ namespace DYP
                 if (eDown) boxSkill.OnEPressed();
                 if (eHeld) boxSkill.OnEHold(axis);
                 if (eUp) boxSkill.OnEReleased();
+            }
+
+            if (destroySkill != null)
+            {
+                if (eDown) destroySkill.OnEPressed();
             }
 
             if (IsPossessing)
