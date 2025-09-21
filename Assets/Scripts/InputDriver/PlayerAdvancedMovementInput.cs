@@ -27,6 +27,22 @@ namespace DYP
         [SerializeField] private bool freezePlayerWhenPossessed = true;
         [SerializeField] private bool zeroGhostInputInFollow = true;
 
+
+        [Header("Audio")]
+        [Tooltip("AudioManager kütüphanesindeki anahtarlar (varsa bunlar öncelikli kullanılır).")]
+        [SerializeField] private string[] possessionSfxKeys;
+
+        [Tooltip("Anahtar yoksa doğrudan bu clip'lerden rastgele çalınır.")]
+        [SerializeField] private AudioClip[] possessionSfxClips;
+
+        [SerializeField, Range(0f, 1f)]
+        private float possessionSfxVolume = 1f;
+
+        [SerializeField]
+        private bool avoidImmediateRepeat = true;
+
+        private int _lastPlayedIndex = -1;
+
         private void Reset()
         {
             if (m_PushPullBridge == null) m_PushPullBridge = GetComponent<CharacterPushPullBridge2D>();
@@ -78,27 +94,29 @@ namespace DYP
 
         private void TogglePossession()
         {
+            // sadece bir satır
+            AudioManager.I?.PlayRandomFromGroup("possession", 1f);
+
             if (!IsPossessing)
             {
                 ghost.TakeControl();
-
                 if (freezePlayerWhenPossessed && m_Controller != null)
                     m_Controller.SetFrozen(true);
-
                 if (cameraFollow != null && ghostCollider != null)
                     cameraFollow.SetMainTarget(ghostCollider);
             }
             else
             {
                 ghost.ReleaseControl();
-
                 if (freezePlayerWhenPossessed && m_Controller != null)
                     m_Controller.SetFrozen(false);
-
                 if (cameraFollow != null && playerCollider != null)
                     cameraFollow.SetMainTarget(playerCollider);
             }
         }
+
+
+
     }
 
 

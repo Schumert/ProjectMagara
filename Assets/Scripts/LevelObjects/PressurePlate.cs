@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -34,7 +35,6 @@ public class PressurePlate : MonoBehaviour
         if (plateVisual != null)
             _plateDefaultPos = plateVisual.localPosition;
 
-        // targetObjects içindeki tüm IPlateReactive component'lerini topla
         if (targetObjects != null && targetObjects.Length > 0)
         {
             _reactives = targetObjects
@@ -49,31 +49,29 @@ public class PressurePlate : MonoBehaviour
         }
     }
 
+    // class alanı
+    private readonly HashSet<GameObject> _pressingObjects = new HashSet<GameObject>();
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!IsInLayerMask(other.gameObject.layer)) return;
-
-        _objectsOnPlate++;
-        if (_objectsOnPlate == 1)
+        if (_pressingObjects.Add(other.gameObject) && _pressingObjects.Count == 1)
         {
-            // İlk temas: tüm reactives'e basılma bildir
-            for (int i = 0; i < _reactives.Length; i++)
-                _reactives[i].PlatePressed(this);
+            foreach (var r in _reactives) r.PlatePressed(this);
+            AudioManager.I.PlaySFX("click");
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         if (!IsInLayerMask(other.gameObject.layer)) return;
-
-        _objectsOnPlate = Mathf.Max(0, _objectsOnPlate - 1);
-        if (_objectsOnPlate == 0)
+        if (_pressingObjects.Remove(other.gameObject) && _pressingObjects.Count == 0)
         {
-            // Son nesne kalktı: tüm reactives'e bırakma bildir
-            for (int i = 0; i < _reactives.Length; i++)
-                _reactives[i].PlateReleased(this);
+            foreach (var r in _reactives) r.PlateReleased(this);
+            AudioManager.I.PlaySFX("click_up");
         }
     }
+
 
     private bool IsInLayerMask(int layer)
     {

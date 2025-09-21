@@ -124,7 +124,7 @@ namespace DYP
         {
             if (!canFollow || target == null) return;
 
-            // player facing’e göre offset’i ayarla (sağ >=0 -> +xAbs, sol -> -xAbs)
+            // player facing’e göre offset’i ayarla
             if (playerController != null)
             {
                 int dir = playerController.FacingDirection;
@@ -137,7 +137,7 @@ namespace DYP
 
             desiredFollowPos = target.position + offset;
 
-            // kinematik takip (konum)
+
             transform.position = Vector3.SmoothDamp(
                 transform.position,
                 desiredFollowPos,

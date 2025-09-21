@@ -45,6 +45,7 @@ public class GhostDestroySkill : MonoBehaviour
 
             Destroy(target);
             Debug.Log($"Destroyable obje yok edildi: {target.name}");
+            AudioManager.I.PlaySFX("explosion");
         }
         else
         {

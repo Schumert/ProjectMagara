@@ -187,7 +187,7 @@ namespace DYP
             _lastSpawnedRB = rb;
             CacheSelection(rb); // yeni kutuyu hemen kontrol etmeye başla
 
-
+            AudioManager.I?.PlaySFX("creation");
 
 
         }
