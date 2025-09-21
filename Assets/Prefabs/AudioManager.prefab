@@ -53,11 +53,19 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: da42aada0e1fa6b4caf48e3d97116fbf, type: 3}
   - key: creation
     clip: {fileID: 8300000, guid: 25ccd4283443cd449a11dd85fea65e3c, type: 3}
+  - key: jump
+    clip: {fileID: 8300000, guid: 1b38086111ca6ee4b9ac3e93182e6d33, type: 3}
   musicLibrary:
   - key: music1
-    clip: {fileID: 8300000, guid: c6fe96cc1f9ae374599edc80a96cf2fd, type: 3}
+    clip: {fileID: 8300000, guid: 5de69d375f0b81f4fa58d80aa0b517b5, type: 3}
+  - key: music2
+    clip: {fileID: 8300000, guid: 65da4cbcf8fdf604698ef9a8d891d13a, type: 3}
   musicCrossfadeTime: 0.6
-  musicVolume: 0.5
+  musicMixer: {fileID: 0}
+  musicGroup: {fileID: 0}
+  sfxGroup: {fileID: 0}
+  musicVolParam: MusicVolDb
+  musicVolume: 0.462
   sfxVolume: 0.9
   sfxPoolSize: 6
   sfx3DSpatialized: 0

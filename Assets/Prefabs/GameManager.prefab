@@ -46,5 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   sceneMusic:
-  - sceneName: SampleScene
+  - sceneName: LevelTest1
     musicKey: music1
+  - sceneName: LevelTest2
+    musicKey: music2
