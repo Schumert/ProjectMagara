@@ -59,38 +59,53 @@ namespace DYP
         {
             if (m_PushPullBridge == null) return;
 
-            // eksen oku (paket driver da okuyacak; biz bridge ve gerekirse overwrite için kullanacağız)
+            // --- Hareket & Grab ---
             float horizontal = Input.GetAxisRaw(m_HorizontalAxis);
             float vertical = Input.GetAxisRaw(m_VerticalAxis);
 
-            // Bridge’e push/pull için ekseni ve grab durumunu ilet
             m_PushPullBridge.SetMoveAxis(new Vector2(horizontal, vertical));
             bool grabHeld = Input.GetKey(m_GrabKey);
             m_PushPullBridge.HoldAction(grabHeld);
 
-            // === GRAB VARKEN OYUNCUYU YAVAŞLAT ===
             if (grabHeld && m_Controller != null && m_PushPullBridge.IsGrabbing)
             {
                 bool shouldSlow = true;
-
                 if (m_OnlyWhenPulling)
-                {
-                    // SADECE ÇEKERKEN yavaşlat
                     shouldSlow = m_PushPullBridge.IsPullingWithInput(horizontal);
-                }
 
                 if (shouldSlow)
                 {
                     float scaledX = horizontal * m_SpeedScaleWhileGrab;
-                    // Paket driver'ın yazdığını overwrite ediyoruz (execution order: bu script DAHA SONRA çalışsın)
                     m_Controller.InputMovement(new Vector2(scaledX, vertical));
                 }
             }
 
+            // --- Jump ---
+            if (m_Controller != null)
+            {
+                bool jumpPressed = Input.GetButtonDown("Jump");
+                bool jumpHeld = Input.GetButton("Jump");
+                bool jumpReleased = Input.GetButtonUp("Jump");
 
+                if (jumpPressed)
+                {
+                    m_Controller.PressJump(true);
+
+                    // 🔊 Jump sesi çal
+                    AudioManager.I?.PlaySFX("jump", 1f, 1f);
+                    // Eğer library’de "jump" key yoksa alternatif:
+                    // AudioManager.I?.PlayRandomFromGroup("jump");
+                }
+
+                if (jumpHeld) m_Controller.HoldJump(true);
+                if (jumpReleased) m_Controller.ReleaseJump(true);
+            }
+
+            // --- Possession Toggle ---
             if (Input.GetKeyDown(toggleControlKey))
                 TogglePossession();
         }
+
 
         private void TogglePossession()
         {

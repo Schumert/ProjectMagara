@@ -5953,6 +5953,42 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1557147735}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[0].musicKey
+      value: music1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[1].musicKey
+      value: music2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[2].musicKey
+      value: music1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[3].musicKey
+      value: ambience
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[0].sceneName
+      value: LevelTest1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[1].sceneName
+      value: LevelTest2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[2].sceneName
+      value: LevelTest1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6135561200931573365, guid: 7eebac233024ef34ca8bd95b9a769f17, type: 3}
+      propertyPath: sceneMusic.Array.data[3].sceneName
+      value: LevelTest2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6027,6 +6063,50 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicVolume
+      value: 0.462
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: sfxLibrary.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: sfxLibrary.Array.data[4].key
+      value: jump
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: sfxLibrary.Array.data[4].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1b38086111ca6ee4b9ac3e93182e6d33, type: 3}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.data[0].key
+      value: music1
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.data[1].key
+      value: music2
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.data[2].key
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.data[0].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 5de69d375f0b81f4fa58d80aa0b517b5, type: 3}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.data[1].clip
+      value: 
+      objectReference: {fileID: 8300000, guid: 65da4cbcf8fdf604698ef9a8d891d13a, type: 3}
+    - target: {fileID: 900448205413583519, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
+      propertyPath: musicLibrary.Array.data[2].clip
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3735363577742718513, guid: 6e2c4489b27701f44bf8a83773676e4e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.842198
