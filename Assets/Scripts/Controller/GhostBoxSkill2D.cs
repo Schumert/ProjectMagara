@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.Tilemaps;
 using UnityEngine;
 
 namespace DYP
@@ -32,6 +33,10 @@ namespace DYP
         private List<GameObject> currentBoxes = new List<GameObject>();
 
 
+        [Header("Particle")]
+        public GameObject spellParticle;
+
+
 
 
         public bool IsControllingBox => _holdActive && _selectedRB != null;
@@ -46,6 +51,7 @@ namespace DYP
         // orijinal RB ayarlarını geri yüklemek için
         private float _savedGravity = 1f;
         private float _savedDrag = 0f;
+        private GameObject fx;
 
         // ---------------- INPUT API ----------------
         public void OnEPressed()
@@ -59,6 +65,11 @@ namespace DYP
             else
             {
                 _lastETapTime = t;
+            }
+
+            if (spellParticle != null && currentBoxes.Count > 0)
+            {
+                fx = Instantiate(spellParticle, currentBoxes[currentBoxes.Count - 1].transform.position, Quaternion.identity);
             }
         }
 
@@ -98,6 +109,12 @@ namespace DYP
             }
 
             _selectedRB = null;
+
+            if (fx != null)
+            {
+                Destroy(fx);
+                fx = null;
+            }
         }
 
         // ---------------- PHYSICS ----------------
@@ -122,6 +139,11 @@ namespace DYP
                 // v.y = Mathf.MoveTowards(v.y, dir.y * controlSpeed, controlSpeed * 2f * Time.fixedDeltaTime);
                 _selectedRB.linearVelocity = v;
             }
+
+
+            if (fx != null)
+                fx.transform.position = currentBoxes[currentBoxes.Count - 1].transform.position;
+
         }
 
         // ---------------- HELPERS ----------------
